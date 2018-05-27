@@ -24,6 +24,24 @@ Then execute
 
 `flask run`
 
+## Use the app
+ 1. Register a new user
+ 
+ `curl -X POST -H 'Content-Type:application/json' -d '{"email":"test@te.st","password":"testpass"}' http://127.0.0.1:5000/register`
+ 
+ 2. Find the confirmation link in the app logs and follow it. For example
+ 
+ `curl -X GET http://127.0.0.1:5000/confirm/InRlc3RAdGUuc3Qi.rH-8MJiKvWUpKiig1XOeO6PAGVY`
+ 
+ 3. Login
+ 
+ `curl -X POST -H 'Content-Type:application/json' -d '{"email":"test@te.st","password":"testpass"}' -c - http://127.0.0.1:5000/login`
+ 
+ 4. Copy the token and access the index page
+ 
+ `curl -X GET --cookie "token=eyJhbGciOiJIUzI1NiIsImlhdCI6MTUyNzQ0ODI3OCwiZXhwIjoxNTI3NDQ4ODc4fQ.InRlc3RAdGUuc3Qi.vIgG92S-ohcZu9BXxDplGRnrLVXKHngCltkncGrbekw" http://127.0.0.1:5000/`
+ 
+
 # Vimcar Coding Challenge: Backend
 
 Welcome to the Vimcar Coding Challenge! We would like to see how you think and solve problems. This is an experiment to see how you design applications and write code. Feel free to use frameworks or libraries of your choice to achieve the goal.
