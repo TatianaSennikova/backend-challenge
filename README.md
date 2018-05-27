@@ -1,3 +1,29 @@
+## Prerequisites
+Python3, pip3, sqlite3
+
+## Install
+Activate a virtual environment (recommended) and execute:
+
+`pip install -r requirements.txt`
+
+## Run the tests
+In project root directory execute
+
+`pytest -v`
+
+## Run local server
+In project root directory execute
+
+```
+export FLASK_ENV=development
+```
+
+`FLASK_ENV=development` is needed in order to receive a confirmation link in the logs.
+
+Then execute
+
+`flask run`
+
 # Vimcar Coding Challenge: Backend
 
 Welcome to the Vimcar Coding Challenge! We would like to see how you think and solve problems. This is an experiment to see how you design applications and write code. Feel free to use frameworks or libraries of your choice to achieve the goal.
