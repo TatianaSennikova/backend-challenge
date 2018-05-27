@@ -7,15 +7,15 @@ import time
 import pytest
 from itsdangerous import URLSafeSerializer
 from .. import login
+from ..login import create_app
 from ..models import db
-
-secret_key = 'cc3a2ef5d33c8557b6e1aadbb582c90599a0392eb6f28ef65f404bbe7606d423'
 
 INDEX_URL = '/'
 REGISTER_URL = '/register'
 CONFIRM_URL = '/confirm/'
 LOGIN_URL = '/login'
 
+SECRET_KEY = 'testsecretkey'
 INVALID_EMAIL_TOKEN = 'emailtoken'
 
 
@@ -23,14 +23,9 @@ class TestClass:
     @classmethod
     def setup_class(cls):
         cls.db_fd, cls.temp_db_path = tempfile.mkstemp()
-        with login.app.app_context():
-            login.app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + cls.temp_db_path
-            login.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-            login.app.config['TESTING'] = True
-            db.init_app(login.app)
-            db.create_all()
+        app = create_app(cls.temp_db_path, SECRET_KEY)
 
-        cls.client = login.app.test_client()
+        cls.client = app.test_client()
 
     @classmethod
     def teardown_class(cls):
@@ -40,7 +35,7 @@ class TestClass:
     def setup_method(self):
         self.test_email = 'test.{}@test.test'.format("".join([random.choice(string.ascii_letters) for i in range(5)]))
         self.test_password = "".join([random.choice(string.ascii_letters) for i in range(15)])
-        self.email_token = URLSafeSerializer(secret_key).dumps(self.test_email)
+        self.email_token = URLSafeSerializer(SECRET_KEY).dumps(self.test_email)
 
     """
     Tests for /
