@@ -58,6 +58,8 @@ def create_app(db_path, secret_key):
 
         user = User.query.filter_by(email=email).one_or_none()
         if user:
+            if user.is_confirmed:
+                abort(400, "Email has been registered")
             user.set_password(password)
             db.session.commit()
         else:
