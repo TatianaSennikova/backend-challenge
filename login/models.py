@@ -50,8 +50,6 @@ class User(db.Model):
         token_serializer = URLSafeSerializer(secret_key)
         try:
             email = token_serializer.loads(token)
-        except SignatureExpired:
-            return None
         except BadSignature:
             return None
         user = User.query.filter_by(email=email).one_or_none()
