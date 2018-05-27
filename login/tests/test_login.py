@@ -114,6 +114,39 @@ class TestClass:
         response = TestClass.client.post(REGISTER_URL, json={'email': incorrect_email, 'password': self.test_password})
         assert 400 == response.status_code
 
+    def test_register_confirmed_email(self):
+        response = TestClass.client.post(REGISTER_URL, json={'email': self.test_email, 'password': self.test_password})
+        assert 201 == response.status_code
+
+        response = TestClass.client.get(CONFIRM_URL + self.email_token)
+        assert 201 == response.status_code
+
+        response = TestClass.client.post(REGISTER_URL, json={'email': self.test_email, 'password': self.test_password})
+        assert 400 == response.status_code
+
+    def test_register_another_password(self):
+        response = TestClass.client.post(REGISTER_URL, json={'email': self.test_email, 'password': self.test_password})
+        assert 201 == response.status_code
+
+        new_password = '12345'
+        response = TestClass.client.post(REGISTER_URL, json={'email': self.test_email, 'password': new_password})
+        assert 201 == response.status_code
+
+        response = TestClass.client.get(CONFIRM_URL + self.email_token)
+        assert 201 == response.status_code
+
+        response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
+        assert 401 == response.status_code
+
+        auth_token = response.headers.get('Set-Cookie', None)
+        assert not auth_token
+
+        response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': new_password})
+        assert 200 == response.status_code
+
+        auth_token = response.headers.get('Set-Cookie', None)
+        assert auth_token
+
     """
     Tests for /confirm/<email_token>
     """
@@ -224,7 +257,7 @@ class TestClass:
         response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
         assert 200 == response.status_code
 
-        auth_token = response.headers['Set-Cookie']
+        auth_token = response.headers.get('Set-Cookie', None)
         assert auth_token
 
         response = TestClass.client.get(INDEX_URL, headers={'Get-Cookie': {'token': auth_token}})
@@ -243,7 +276,7 @@ class TestClass:
         response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
         assert 200 == response.status_code
 
-        auth_token = response.headers['Set-Cookie']
+        auth_token = response.headers.get('Set-Cookie', None)
         assert auth_token
 
         response = TestClass.client.get(INDEX_URL, headers={'Get-Cookie': {'token': auth_token}})
@@ -262,7 +295,7 @@ class TestClass:
         response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
         assert 200 == response.status_code
 
-        auth_token = response.headers['Set-Cookie']
+        auth_token = response.headers.get('Set-Cookie', None)
         assert auth_token
 
         response = TestClass.client.get(INDEX_URL, headers={'Get-Cookie': {'token': auth_token}})
@@ -278,14 +311,14 @@ class TestClass:
         response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
         assert 200 == response.status_code
 
-        auth_token_first = response.headers['Set-Cookie']
+        auth_token_first = response.headers.get('Set-Cookie', None)
         assert auth_token_first
 
         time.sleep(1)
         response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
         assert 200 == response.status_code
 
-        auth_token_second = response.headers['Set-Cookie']
+        auth_token_second = response.headers.get('Set-Cookie', None)
         assert auth_token_second
 
         assert auth_token_first != auth_token_second
