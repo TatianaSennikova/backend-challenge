@@ -135,13 +135,13 @@ class TestClass:
         response = TestClass.client.get(CONFIRM_URL + self.email_token)
         assert 201 == response.status_code
 
-        response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
+        response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': new_password})
         assert 401 == response.status_code
 
         auth_token = response.headers.get('Set-Cookie', None)
         assert not auth_token
 
-        response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': new_password})
+        response = TestClass.client.post(LOGIN_URL, json={'email': self.test_email, 'password': self.test_password})
         assert 200 == response.status_code
 
         auth_token = response.headers.get('Set-Cookie', None)
